@@ -109,20 +109,60 @@ window.addEventListener('load', function(){
 	function tryReplies(json, pcommentsdiv){
 		var myKeys = Object.keys(json[0].post.replies);
 		for (var i = 0; i < myKeys.length; i++){
-			var newString = myKeys[i];
-			var replyKeys = Object.keys(json[0].post.replies[newString]);
-			populateReplies(newString, replyKeys, json, pcommentsdiv);
+			var replyKey = myKeys[i];
+			var replyData = json[0].post.replies[replyKey];
+			populateReplies(replyData, json, pcommentsdiv);
 		}
 	}
 
-	function populateReplies(newString, replyKeys, json, pcommentsdiv){
-		for (var i = 0; i < replyKeys.length; i++){
-			var replyValues = Object.values(json[0].post.replies[newString]);
-			var newDiv = document.createElement("div");
-			var newDivTest = document.createTextNode(replyValues[i]);
-			newDiv.appendChild(newDivTest);
-			pcommentsdiv.appendChild(newDiv);
-		}
+	function populateReplies(replyData, json, pcommentsdiv){
+		var commentsMediaDiv = document.createElement("div");
+		var userImg = document.createElement("img");
+		var mediaInfo = document.createElement("div");
+		var userName = document.createElement("a");
+		var commentText = document.createTextNode(replyData.replyContent);
+		var commentInfo = document.createElement("div");
+		commentsMediaDiv.className = "comment media";
+		userImg.className = "profilePhoto";
+		userImg.setAttribute('src', replyData.profPic);
+		mediaInfo.className = "media__info";
+		userName.className = "userName";
+		userName.setAttribute('href', '#');
+		userName.setAttribute("data-friends", "30");
+		userName.innerHTML = replyData.name;
+		commentInfo.className = "comment__info";
+		pcommentsdiv.appendChild(commentsMediaDiv);
+		commentsMediaDiv.appendChild(userImg);
+		commentsMediaDiv.appendChild(mediaInfo);
+		mediaInfo.appendChild(userName);
+		mediaInfo.appendChild(commentText);
+		mediaInfo.appendChild(commentInfo);
+		populateCommentInfo(commentInfo, replyData);
+	}
+
+	function populateCommentInfo(commentInfo, replyData){
+		//Populates the like button.
+		var likeClick = document.createElement("a");
+		likeClick.className = "likeClick";
+		likeClick.setAttribute('href', '#');
+		likeClick.innerHTML = "Like";
+		commentInfo.appendChild(likeClick);
+
+		//Populates the number of replies on the post.
+		var replyCount = document.createElement("a");
+		replyCount.className = "replyCount";
+		replyCount.setAttribute('href', '#');
+		replyCount.innerHTML = replyData.replyCount + " replies";
+		commentInfo.appendChild(replyCount);
+
+		//Populates the number of likes on the post.
+		var numOfLikes = document.createElement("span");
+		numOfLikes.innerHTML = replyData.likeCount + " likes";
+		commentInfo.appendChild(numOfLikes);
+
+		//Populates the time the user posted the comment.
+		var timePosted = document.createTextNode(replyData.timePosted);
+		commentInfo.appendChild(timePosted);
 	}
 
 	var container = document.getElementsByClassName("outerContainer")[0];
